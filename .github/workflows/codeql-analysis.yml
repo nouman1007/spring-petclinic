@@ -72,9 +72,10 @@ jobs:
       uses: github/codeql-action/analyze@v2
 
 
-  env1:
+  Environment:
     name: stagging
-    run-on: self-hosted
+    needs: analyze
+    runs-on: self-hosted
     container:
       image: alpine:3.11
     steps:
