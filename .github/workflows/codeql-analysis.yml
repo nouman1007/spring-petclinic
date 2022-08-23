@@ -77,7 +77,7 @@ jobs:
     needs: analyze
     runs-on: self-hosted
     container:
-      image: alpine:3.11
+      image: alpine:latest
     steps:
     - name: before_script
       run: |
