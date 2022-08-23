@@ -74,7 +74,7 @@ jobs:
 
   env1:
     name: stagging
-    run-on:self-hosted
+    run-on: self-hosted
     container:
       image: alpine:3.11
       steps:
