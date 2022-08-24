@@ -71,10 +71,25 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 
+  build:
+    name: build
+    needs: security    
+    runs-on: self-hosted
+    container:
+      image: maven:3.8.5-jdk-11
+    steps:
+      - name: script
+        run: |
+         mvn clean install
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Jar file at target 
+          path: target/*.jar
 
   Environment:
     name: stagging
-    needs: analyze
+    needs: build
     runs-on: self-hosted
     container:
       image: ubuntu:20.04
