@@ -84,7 +84,7 @@ jobs:
         DEPLOY_SERVER_IP: ${{ secrets.DEPLOY_SERVER_IP }} #DEPLOY_SERVER_IP
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}   #SSH_PRIVATE_KEY
       run: |
-        apt-get update && apt-get add openssh-client bash
+        apt-get update && apt-get install openssh-server && sudo systemctl enable ssh && sudo systemctl start ssh
         mkdir -p ~/.ssh
         eval $(ssh-agent -s)
         echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
