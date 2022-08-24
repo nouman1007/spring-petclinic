@@ -72,29 +72,33 @@ jobs:
       uses: github/codeql-action/analyze@v2
 
 
-  # Environment:
-  #   name: stagging
-  #   needs: analyze
-  #   runs-on: self-hosted
-  #   container:
-  #     image: alpine:latest
-  #   steps:
-  #   - name: before_script
-  #     run: |
-  #       apk update && apk add openssh-client bash
-  #       mkdir -p ~/.ssh
-  #       eval $(ssh-agent -s)
-  #       echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-  #       touch ~/.ssh/config
-  #       echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  #       ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
-  #   - name: script
-  #     run: |
-  #       echo "Deploying started..."
-  #       ssh ubuntu@$DEPLOY_SERVER_IP "sudo systemctl stop spring-petclinic.service"
-  #       scp ./target/spring-petclinic-2.7.0-SNAPSHOT.jar ubuntu@$DEPLOY_SERVER_IP:~/spring-petclinic/
-  #       ssh ubuntu@$DEPLOY_SERVER_IP "sudo systemctl start spring-petclinic.service"
-  #       echo "Finished deploying the app."
+  Environment:
+    name: stagging
+    needs: analyze
+    runs-on: self-hosted
+    container:
+      image: alpine:latest
+    steps:
+    - name: before_script
+      env:
+        DEPLOY_SERVER_IP: DEPLOY_SERVER_IP #${{ secrets.DEPLOY_SERVER_IP }}
+        SSH_PRIVATE_KEY: SSH_PRIVATE_KEY #${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        apk update && apk add openssh-client bash
+        mkdir -p ~/.ssh
+        eval $(ssh-agent -s)
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+        touch ~/.ssh/config
+        echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+         ssh-keyscan -H $DEPLOY_SERVER_IP >> ~/.ssh/known_hosts
+         ssh-keyscan -H ${{ secrets.DEPLOY_SERVER_IP }} >> ~/.ssh/known_hosts
+    - name: script
+      run: |
+        echo "Deploying started..." 
+        ssh ubuntu@$DEPLOY_SERVER_IP "sudo systemctl stop spring-petclinic.service"
+        scp ./target/spring-petclinic-2.7.0-SNAPSHOT.jar ubuntu@$DEPLOY_SERVER_IP:~/spring-petclinic/
+        ssh ubuntu@$DEPLOY_SERVER_IP "sudo systemctl start spring-petclinic.service"
+        echo "Finished deploying the app."
 
   security:
     runs-on: ubuntu-latest
