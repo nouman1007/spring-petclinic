@@ -81,8 +81,8 @@ jobs:
     steps:
     - name: before_script
       env:
-        DEPLOY_SERVER_IP: DEPLOY_SERVER_IP #${{ secrets.DEPLOY_SERVER_IP }}
-        SSH_PRIVATE_KEY: SSH_PRIVATE_KEY #${{ secrets.SSH_PRIVATE_KEY }}
+        DEPLOY_SERVER_IP: ${{ secrets.DEPLOY_SERVER_IP }} #DEPLOY_SERVER_IP
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}   #SSH_PRIVATE_KEY
       run: |
         apk update && apk add openssh-client bash
         mkdir -p ~/.ssh
